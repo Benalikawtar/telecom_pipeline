@@ -1,0 +1,30 @@
+from kafka import KafkaConsumer
+import json
+
+# Configuration Kafka
+BOOTSTRAP_SERVERS = ['localhost:9092']
+TOPIC = 'clean_cdr_topic'
+OUTPUT_FILE = 'clean_log.jsonl'
+
+# Création du consumer
+consumer = KafkaConsumer(
+    TOPIC,
+    bootstrap_servers=BOOTSTRAP_SERVERS,
+    auto_offset_reset='earliest',
+    value_deserializer=lambda m: json.loads(m.decode('utf-8'))
+)
+
+print("🎧 En écoute du topic clean_cdr_topic...\n")
+
+try:
+    with open(OUTPUT_FILE, 'a') as f:
+        for message in consumer:
+            data = message.value
+            print(f"\033[92m[✔ CLEAN] {json.dumps(data, indent=2)}\033[0m\n")
+            f.write(json.dumps(data) + '\n')
+
+except KeyboardInterrupt:
+    print("\n⛔ Arrêté par l'utilisateur")
+finally:
+    consumer.close()
+
