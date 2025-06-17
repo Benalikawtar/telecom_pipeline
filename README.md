@@ -43,15 +43,18 @@ Construire un pipeline capable de gérer la génération, la médiation, la tari
 - **PostgreSQL** – stockage des métadonnées et résultats
 - **Docker / WSL Ubuntu** – environnement d’exécution
 
-## 🗃️ Structure des répertoires
+## 🗃️ Structure du projet
 
-├── generate_cdr.py # Génération des fichiers CDR/EDR
-├── producer.py # Envoi vers Kafka
-├── stream_mediation.py # Médiation avec Spark Streaming
-├── rating_engine.py # Tarification (batch)
-├── billing_engine.py # Facturation (batch)
-├── checkpoints/ # Checkpoints Spark
-├── telecom_records.json # Données simulées
-├── docker-compose.yml # Services Kafka, Spark, Postgres
-└── lib/ # Connecteurs PostgreSQL
+Le projet est organisé de manière modulaire pour séparer les différentes étapes du pipeline :
+
+- `generate_cdr.py` : Génération de fichiers CDR/EDR réalistes avec anomalies
+- `producer.py` : Envoi des données vers Kafka (topic `telecom_cdr_topic`)
+- `stream_mediation.py` : Médiation en streaming avec Spark, séparation clean/error
+- `rating_engine.py` : Moteur de tarification batch avec PostgreSQL
+- `billing_engine.py` : Agrégation des coûts et génération des factures
+- `docker-compose.yml` : Configuration des services Kafka, Spark, PostgreSQL
+- `telecom_records.json` : Fichier d’exemple des CDR simulés
+- `checkpoints/` : Répertoires de sauvegarde Spark pour tolérance aux pannes
+- `lib/` : Fichiers JAR nécessaires à la connexion PostgreSQL
+
 
